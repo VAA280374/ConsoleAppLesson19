@@ -33,6 +33,125 @@ namespace ConsoleAppLesson19
 
             };
 
+            bool _true = true;
+            int i = 1;
+
+            List<string> processors = new List<string>(); // Формируем список возможных вариантов процессора
+            processors.Add(null);
+            foreach (Computer c in listComputers)
+            {
+                foreach (string p in processors)
+                {
+                    if (p == c.Processor)
+                    { 
+                        _true = false;
+                        break;
+                    }
+                }
+                if (_true) processors.Add(c.Processor);
+                _true = true;
+            }
+            processors.RemoveAt(0);
+
+            // Формируем выборку по типу процессора.
+            Console.WriteLine("Выберите тип процессора из списка :"); 
+            foreach (string p in processors)
+            {
+                Console.WriteLine("СТРОКА НОМЕР : {0}  ПРОЦЕССОР ТИПА : {1} ", i, p);
+                i ++;
+            }
+            Console.Write(" ВВЕДИТЕ НОМЕР СТРОКИ : ");
+            i = Convert.ToInt32(Console.ReadLine()) - 1;
+            Console.WriteLine();
+            Console.WriteLine("С процессором {0} в наличии : ", processors[i]);
+            List<Computer> listComputersP = listComputers
+                .Where(c => c.Processor == processors[i])
+                .ToList();
+            foreach (Computer c in listComputersP)
+            {
+                Console.WriteLine("Артикул : {0}, Модель : {1}, Чатота процессора {2}МГц, Объем RAM={3}Гб, Объем HDD={4}Мб, Объем VideoRAM={5}Гб, Стоимость={6}У.Е., В наличии : {7}шт.", c.Id, c.Model,c.FrecProcMGz, c.RamGb, c.HddGb, c.VideoRamGb, c.PriceUE, c.NamberOfItems);
+            }
+            Console.WriteLine();
+
+            // Формируем выборку по Объему памяти.
+            Console.Write("Введите требуемый минимальный целый объем оперативный памяти в Гб : ");
+            int vRAM = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine();
+            Console.WriteLine("С объемом оперативной памяти не менее {0}Гб в наличии : ", vRAM);
+            List<Computer> listComputersRAM = listComputers
+                .Where(c => c.RamGb >= vRAM)
+                .ToList();
+            foreach (Computer c in listComputersRAM)
+            {
+                Console.WriteLine("Артикул : {0}, Модель : {1}, Тип процессора : {8}, Чатота процессора {2}МГц, Объем RAM={3}Гб, Объем HDD={4}Мб, Объем VideoRAM={5}Гб, Стоимость={6}У.Е., В наличии : {7}шт.", c.Id, c.Model, c.FrecProcMGz, c.RamGb, c.HddGb, c.VideoRamGb, c.PriceUE, c.NamberOfItems, c.Processor);
+            }
+            Console.WriteLine();
+
+            // Сортируем по увеличению стоимости.
+            decimal priceMax = 0;
+            List<Computer> listComputersPriceAp = new List<Computer>();
+            foreach (Computer c in listComputers)
+            {
+                if (c.PriceUE >= priceMax)
+                {
+                    listComputersPriceAp.Add(c);
+                    priceMax = c.PriceUE;
+                }
+                else
+                {
+                    i = 0;
+                    foreach (Computer cp in listComputersPriceAp)
+                    {
+                        if (c.PriceUE < cp.PriceUE) break;
+                        i++;
+                    }
+                    listComputersPriceAp.Insert(i, c);
+                }
+            }
+            Console.WriteLine("Представляем список кимпьютепров в наличии по возрастанию стоимости : ");
+            foreach (Computer c in listComputersPriceAp)
+            {
+                Console.WriteLine("Артикул : {0}, Модель : {1}, Тип процессора : {8}, Чатота процессора {2}МГц, Объем RAM={3}Гб, Объем HDD={4}Мб, Объем VideoRAM={5}Гб, Стоимость={6}У.Е., В наличии : {7}шт.", c.Id, c.Model, c.FrecProcMGz, c.RamGb, c.HddGb, c.VideoRamGb, c.PriceUE, c.NamberOfItems, c.Processor);
+            }
+            Console.WriteLine();
+
+            // Группируем по типу процессора.
+            foreach (string pr in processors)
+            {
+                Console.WriteLine("С процессором типа : {0} в наличии следующие модели : ", pr);
+                foreach (Computer c in listComputersPriceAp)
+                {
+                    if (c.Processor == pr) Console.WriteLine("Артикул : {0}, Модель : {1}, Тип процессора : {8}, Чатота процессора {2}МГц, Объем RAM={3}Гб, Объем HDD={4}Мб, Объем VideoRAM={5}Гб, Стоимость={6}У.Е., В наличии : {7}шт.", c.Id, c.Model, c.FrecProcMGz, c.RamGb, c.HddGb, c.VideoRamGb, c.PriceUE, c.NamberOfItems, c.Processor);
+                }
+            }
+            Console.WriteLine();
+
+            // Самые : дорогой и бюджетный.
+            i = listComputersPriceAp.Count - 1;
+            Console.WriteLine("Самым дорогим из компьютеров в наличии является : ");
+            Console.WriteLine("Артикул : {0}, Модель : {1}, Тип процессора : {8}, Чатота процессора {2}МГц, Объем RAM={3}Гб, Объем HDD={4}Мб, Объем VideoRAM={5}Гб, Стоимость={6}У.Е., В наличии : {7}шт.", listComputersPriceAp[i].Id, listComputersPriceAp[i].Model, listComputersPriceAp[i].FrecProcMGz, listComputersPriceAp[i].RamGb, listComputersPriceAp[i].HddGb, listComputersPriceAp[i].VideoRamGb, listComputersPriceAp[i].PriceUE, listComputersPriceAp[i].NamberOfItems, listComputersPriceAp[i].Processor);
+            i = 0;
+            Console.WriteLine("Самым буджетным из компьютеров в наличии является : ");
+            Console.WriteLine("Артикул : {0}, Модель : {1}, Тип процессора : {8}, Чатота процессора {2}МГц, Объем RAM={3}Гб, Объем HDD={4}Мб, Объем VideoRAM={5}Гб, Стоимость={6}У.Е., В наличии : {7}шт.", listComputersPriceAp[i].Id, listComputersPriceAp[i].Model, listComputersPriceAp[i].FrecProcMGz, listComputersPriceAp[i].RamGb, listComputersPriceAp[i].HddGb, listComputersPriceAp[i].VideoRamGb, listComputersPriceAp[i].PriceUE, listComputersPriceAp[i].NamberOfItems, listComputersPriceAp[i].Processor);
+            Console.WriteLine();
+
+            // Формируем выборку позиций с наличием более указанного.
+            i = 30;
+            List<Computer> listComputersShit = listComputers
+                .Where(c => c.NamberOfItems > i)
+                .ToList();
+            Console.WriteLine("Залежавшимися позициями (в наличии более {0}), являются : ", i);
+            if (listComputersShit.Count > 0)
+            {
+                foreach (Computer c in listComputersShit)
+                {
+                    Console.WriteLine("Артикул : {0}, Модель : {1}, Тип процессора : {8}, Чатота процессора {2}МГц, Объем RAM={3}Гб, Объем HDD={4}Мб, Объем VideoRAM={5}Гб, Стоимость={6}У.Е., В наличии : {7}шт.", c.Id, c.Model, c.FrecProcMGz, c.RamGb, c.HddGb, c.VideoRamGb, c.PriceUE, c.NamberOfItems, c.Processor);
+                }
+            }
+            else Console.WriteLine(" ЭЭЭ... СЛЮШАЙ ! НЭТУ, ДА !!!   :-) ");
+            Console.WriteLine();
+
+
             Console.ReadKey();
         }
     }
